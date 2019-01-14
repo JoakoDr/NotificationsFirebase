@@ -32,43 +32,29 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "Notification: ${remoteMessage.from}")
         // si la notification no es null, creala
         if (remoteMessage.notification != null) {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-
-            val mBuilder = NotificationCompat.Builder(this, "1")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("TINDER ALERT")
-                .setContentText("¡Nacho tienes un flechazooooo!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(0, mBuilder.build())
+            //utilizo shownotification con el title y body que he recibido
+            showNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
         }
     }
-    //No sirve para nada por que lo hago directamente dentro del if de arriba, no funciona por eso no lo utilizo
+    //Creo la notificacion y la muestro
     private fun showNotification(title: String?, body: String?) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT
-        )
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
 
-        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this)
-            .setSmallIcon(R.mipmap.ic_launcher)
+        val mBuilder = NotificationCompat.Builder(this, "1")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+                //le pongo titulo y body
             .setContentTitle(title)
             .setContentText(body)
-            .setAutoCancel(true)
-            .setSound(soundUri)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)
-
+            .setAutoCancel(true)
+        //Se notifica para mostrarlo
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(0, notificationBuilder.build())
+        notificationManager.notify(0, mBuilder.build())
     }
 
 
